@@ -17,8 +17,8 @@
 #include <unistd.h>
 #import "ClutchConfiguration.h"
 
-void listApps();
-void listApps() {
+void listApps(void);
+void listApps(void) {
     ApplicationsManager *_manager = [[ApplicationsManager alloc] init];
 
     NSArray *installedApps = [_manager installedApps].allValues;
@@ -28,7 +28,7 @@ void listApps() {
     NSString *space;
     for (Application *_app in installedApps)
     {
-        count = [installedApps indexOfObject:_app] + 1;
+        count = (int)[installedApps indexOfObject:_app] + 1;
         if (count < 10)
         {
             space = @"  ";

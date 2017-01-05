@@ -16,8 +16,6 @@
     
     void *data = generate_sinf(12345, "test", 1994); // need that to compare with the new code
     
-    
-    
     return nil;
 }
 

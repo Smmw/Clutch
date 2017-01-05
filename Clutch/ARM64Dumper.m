@@ -62,12 +62,12 @@
     
     for (int i = 0; i < _thinHeader.header.ncmds; i++) {
         
-        uint32_t cmd = [newFileHandle intAtOffset:newFileHandle.offsetInFile];
-        uint32_t size = [newFileHandle intAtOffset:newFileHandle.offsetInFile+sizeof(uint32_t)];
+        uint32_t cmd = [newFileHandle intAtOffset:(NSUInteger)newFileHandle.offsetInFile];
+        uint32_t size = [newFileHandle intAtOffset:(NSUInteger)newFileHandle.offsetInFile+sizeof(uint32_t)];
         
         switch (cmd) {
             case LC_CODE_SIGNATURE: {
-                [newFileHandle getBytes:&ldid inRange:NSMakeRange(newFileHandle.offsetInFile,sizeof(struct linkedit_data_command))];
+                [newFileHandle getBytes:&ldid inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile,sizeof(struct linkedit_data_command))];
                 foundSignature = YES;
                 
                 [[ClutchPrint sharedInstance] printDeveloper: @"FOUND CODE SIGNATURE: dataoff %u | datasize %u",ldid.dataoff,ldid.datasize];
@@ -75,7 +75,7 @@
                 break;
             }
             case LC_ENCRYPTION_INFO_64: {
-                [newFileHandle getBytes:&crypt inRange:NSMakeRange(newFileHandle.offsetInFile,sizeof(struct encryption_info_command_64))];
+                [newFileHandle getBytes:&crypt inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile,sizeof(struct encryption_info_command_64))];
                 foundCrypt = YES;
                 
                 [[ClutchPrint sharedInstance] printDeveloper: @"FOUND ENCRYPTION INFO: cryptoff %u | cryptsize %u | cryptid %u",crypt.cryptoff,crypt.cryptsize,crypt.cryptid];
@@ -84,7 +84,7 @@
             }
             case LC_SEGMENT_64:
             {
-                [newFileHandle getBytes:&__text inRange:NSMakeRange(newFileHandle.offsetInFile,sizeof(struct segment_command_64))];
+                [newFileHandle getBytes:&__text inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile,sizeof(struct segment_command_64))];
                 
                 if (strncmp(__text.segname, "__TEXT", 6) == 0) {
                     foundStartText = YES;
@@ -127,7 +127,7 @@
     //seek to ldid offset
     
     [newFileHandle seekToFileOffset:_thinHeader.offset + ldid.dataoff];
-    [newFileHandle getBytes:codesignblob inRange:NSMakeRange(newFileHandle.offsetInFile, ldid.datasize)];
+    [newFileHandle getBytes:codesignblob inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile, ldid.datasize)];
     
     uint32_t countBlobs = CFSwapInt32(codesignblob->count); // how many indexes?
     

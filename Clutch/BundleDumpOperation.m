@@ -128,7 +128,7 @@
             gbprintln(@"No compatible architecture found");
         }
 
-        BOOL isFAT = numHeaders > 1;
+        //BOOL isFAT = numHeaders > 1;
 
         uint32_t dumpCount = 0;
 
@@ -197,7 +197,7 @@
             [_dumpHandle closeFile];
 
             bool shouldSwap = magic == MH_CIGAM || magic == MH_CIGAM_64 || magic == FAT_CIGAM;
-#define SWAP(NUM) (shouldSwap ? CFSwapInt32(NUM) : NUM)
+#define SWAP(NUM) (shouldSwap ? CFSwapInt32(NUM) : (uint32_t)NUM)
 
             NSMutableArray* _headersToKeep = [NSMutableArray new];
             struct fat_header fat = *(struct fat_header *)buffer.bytes;

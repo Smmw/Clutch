@@ -64,12 +64,12 @@
     
     for (int i = 0; i < _thinHeader.header.ncmds; i++) {
         
-        uint32_t cmd = [newFileHandle intAtOffset:newFileHandle.offsetInFile];
-        uint32_t size = [newFileHandle intAtOffset:newFileHandle.offsetInFile+sizeof(uint32_t)];
+        uint32_t cmd = [newFileHandle intAtOffset:(NSUInteger)newFileHandle.offsetInFile];
+        uint32_t size = [newFileHandle intAtOffset:(NSUInteger)newFileHandle.offsetInFile+sizeof(uint32_t)];
         
         switch (cmd) {
             case LC_CODE_SIGNATURE: {
-                [newFileHandle getBytes:&ldid inRange:NSMakeRange(newFileHandle.offsetInFile,sizeof(struct linkedit_data_command))];
+                [newFileHandle getBytes:&ldid inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile,sizeof(struct linkedit_data_command))];
                 foundSignature = YES;
                 
                 [[ClutchPrint sharedInstance] printDeveloper: @"FOUND CODE SIGNATURE: dataoff %u | datasize %u",ldid.dataoff,ldid.datasize];
@@ -77,7 +77,7 @@
                 break;
             }
             case LC_ENCRYPTION_INFO: {
-                [newFileHandle getBytes:&crypt inRange:NSMakeRange(newFileHandle.offsetInFile,sizeof(struct encryption_info_command))];
+                [newFileHandle getBytes:&crypt inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile,sizeof(struct encryption_info_command))];
                 foundCrypt = YES;
                 
                 [[ClutchPrint sharedInstance] printDeveloper: @"FOUND ENCRYPTION INFO: cryptoff %u | cryptsize %u | cryptid %u",crypt.cryptoff,crypt.cryptsize,crypt.cryptid];
@@ -133,7 +133,7 @@
     //seek to ldid offset
     
     [newFileHandle seekToFileOffset:_thinHeader.offset + ldid.dataoff];
-    [newFileHandle getBytes:codesignblob inRange:NSMakeRange(newFileHandle.offsetInFile, ldid.datasize)];
+    [newFileHandle getBytes:codesignblob inRange:NSMakeRange((NSUInteger)newFileHandle.offsetInFile, ldid.datasize)];
     
     uint32_t countBlobs = CFSwapInt32(codesignblob->count); // how many indexes?
     
@@ -175,7 +175,7 @@
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
         
         dispatch_sync(queue, ^{
-            dumpResult = [self _dumpToFileHandle:newFileHandle withDumpSize:(crypt.cryptsize + crypt.cryptoff) pages:pages fromPort:port pid:pid aslrSlide:__text_start codeSignature_hashOffset:CFSwapInt32(directory.hashOffset) codesign_begin:begin];
+            dumpResult = [self _dumpToFileHandle:newFileHandle withDumpSize:(crypt.cryptsize + crypt.cryptoff) pages:pages fromPort:port pid:pid aslrSlide:__text_start codeSignature_hashOffset:CFSwapInt32(directory.hashOffset) codesign_begin:(uint32_t)begin];
         });
         
     }

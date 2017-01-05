@@ -13,6 +13,7 @@
 #import "SCInfoBuilder.h"
 #import "Device.h"
 #import "ClutchPrint.h"
+#import "ClutchConfiguration.h"
 
 @interface Application ()
 {
@@ -314,7 +315,7 @@
 
 - (NSString *)zipFilename
 {
-    return [NSString stringWithFormat:@"%@-iOS%@-(Clutch-%@).ipa",self.bundleIdentifier,self.infoDictionary[@"MinimumOSVersion"],CLUTCH_VERSION];
+    return [NSString stringWithFormat:@"%@-iOS%@-(Clutch-%@).ipa",self.bundleIdentifier,self.infoDictionary[@"MinimumOSVersion"], CLUTCH_VERSION_STRING];
 }
 
 - (NSString *)zipPrefix

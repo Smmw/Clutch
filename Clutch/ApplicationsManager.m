@@ -6,14 +6,12 @@
 //
 //
 
-#define applistCachePath @"applist-cache.plist"
-#define dumpedAppPath @"/etc/dumped.clutch"
-
 #import <dlfcn.h>
 #import "ApplicationsManager.h"
 #import "FBApplicationInfo.h"
 #import "LSApplicationProxy.h"
 #import "LSApplicationWorkspace.h"
+#import "ClutchConfiguration.h"
 
 typedef NSDictionary* (*MobileInstallationLookup)(NSDictionary *options);
 
@@ -31,9 +29,9 @@ typedef NSDictionary* (*MobileInstallationLookup)(NSDictionary *options);
 {
     if ((self = [super init]))
     {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:applistCachePath])
+        if ([[NSFileManager defaultManager] fileExistsAtPath:CLUTCH_APPLIST_CACHE_PATH])
         {
-            _cachedApps = [[NSMutableArray alloc] initWithContentsOfFile:applistCachePath];
+            _cachedApps = [[NSMutableArray alloc] initWithContentsOfFile:CLUTCH_APPLIST_CACHE_PATH];
         }
         else
         {
@@ -159,7 +157,7 @@ typedef NSDictionary* (*MobileInstallationLookup)(NSDictionary *options);
 {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
     dispatch_async(queue, ^{
-        [_cachedApps writeToFile:applistCachePath atomically:YES];
+        [_cachedApps writeToFile:CLUTCH_APPLIST_CACHE_PATH atomically:YES];
     });
 }
 
@@ -167,7 +165,7 @@ typedef NSDictionary* (*MobileInstallationLookup)(NSDictionary *options);
 - (NSDictionary *)_allApplications
 {
     NSDictionary *returnValue;
-    if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(NSFoundationVersionNumber_iOS_7_0))
+    if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_7_0)
     {
         returnValue = [self listApplicationsForiOS7AndLower];
     }

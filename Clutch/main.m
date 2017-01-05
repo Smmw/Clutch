@@ -15,12 +15,7 @@
 #import "ClutchPrint.h"
 #import "NSTask.h"
 #include <unistd.h>
-
-int diff_ms(struct timeval t1, struct timeval t2)
-{
-    return (int)((((t1.tv_sec - t2.tv_sec) * 1000000) +
-                  (t1.tv_usec - t2.tv_usec)) / 1000);
-}
+#import "ClutchConfiguration.h"
 
 void listApps();
 void listApps() {
@@ -67,16 +62,16 @@ int main (int argc, const char * argv[])
             return 0;
         }
 
-        if (SYSTEM_VERSION_LESS_THAN(NSFoundationVersionNumber_iOS_6_0)) {
+        if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_6_0) {
 
-            gbprintln(@"You need iOS 6.0+ to use Clutch %@",CLUTCH_VERSION);
+            gbprintln(@"You need iOS 6.0+ to use Clutch %@", CLUTCH_VERSION_STRING);
 
             return 0;
         }
 
 
         GBOptionsHelper *options = [[GBOptionsHelper alloc] init];
-        options.applicationVersion = ^{ return CLUTCH_VERSION; };
+        options.applicationVersion = ^{ return CLUTCH_VERSION_STRING; };
         options.printHelpHeader = ^{ return @"Usage: %APPNAME [OPTIONS]"; };
         //options.printHelpFooter = ^{ return @"Thanks to everyone for their help..."; };
 
@@ -294,8 +289,7 @@ int main (int argc, const char * argv[])
                 [[ClutchPrint sharedInstance] print:@"%@ contains watchOS 2 compatible application. It's not possible to dump watchOS 2 apps with Clutch %@ at this moment.",_selectedApp.bundleIdentifier,CLUTCH_VERSION];
             }
 #endif
-
-            gettimeofday(&start, NULL);
+            gettimeofday(&start_time, NULL);
             if (![_selectedApp dumpToDirectoryURL:nil onlyBinaries:[_selectedOption isEqualToString:@"binary-dump"]]) {
                 return 1;
             }

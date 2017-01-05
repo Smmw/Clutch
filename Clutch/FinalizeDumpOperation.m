@@ -13,6 +13,7 @@
 #import "ZipOperation.h"
 #import <sys/time.h>
 #import "ClutchPrint.h"
+#import "ClutchConfiguration.h"
 
 @interface FinalizeDumpOperation ()
 {
@@ -64,8 +65,8 @@
 
     NSString __weak *bundleIdentifier = _application.bundleIdentifier;
     self.completionBlock = ^{
-        gettimeofday(&end, NULL);
-        int dif = diff_ms(end,start);
+        gettimeofday(&end_time, NULL);
+        int dif = diff_ms(end_time, start_time);
         float sec = ((dif + 500.0f) / 1000.0f);
         [[ClutchPrint sharedInstance] printColor:ClutchPrinterColorPink format:@"Finished dumping %@ in %0.1f seconds", bundleIdentifier, sec];
     };

@@ -3,6 +3,8 @@
  see http://hackulo.us/wiki/SC_Info
 */
 
+#import <Foundation/Foundation.h>
+
 void *create_atom(char *name, int len, void *content);
 void *coalesced_atom(int amount, uint32_t name, ...);
 void *combine_atoms(char *name, int amount, ...);

@@ -4,6 +4,7 @@
  */
 
 #import "scinfo.h"
+#import <Foundation/Foundation.h>
 
 // create a SINF atom
 void *create_atom(char *name, int len, void *content)
